@@ -1,151 +1,164 @@
-# # Parking System 
-userList= []
-loginList = []
+# # Parking System
+import pwinput
+import validation
+import remove_vehical
+import car_park
+import json
+
+
+user_List = [
+    {"id": 1, "user_name": "Yash", "email": "yash@gmail.com", "password": "Yash@123"}
+]
+login_List = []
 
 def register():
-    name = input("Enter your name: ").strip()
-    password = input("Enter your password: ").strip()
+    # 1. Load users from file
+    try:
+        with open('parkingData/user_List.json', 'r') as f:
+            user_List = json.load(f)
+    except FileNotFoundError:
+        user_List = []
 
-    if len(password) == '':
-      # validate password length
-      print("Password must be exactly 2 characters long.")
-      return
-    
+    user_name = input("Enter your user_name: ").strip()
 
-    
+    while True:
+        email = input("Enter email: ")
+        if email.endswith('@gmail.com') or email.endswith('@gmail.in'):
+            print('valid email!')
+            break
+        else:
+            print('Invalid email!')
 
-    # check if user already exists
-    for user in userList:
-        if user['name'] == name:
+    password = validation.validate_password()
+
+    # 2. Check if user already exists
+    for user in user_List:
+        if user["user_name"] == user_name or user["email"] == email:
             print("User already exists!")
             return
 
-    # add new user
-    userList.append({
-        'name': name,
-        'password': password
+    # 3. Add new user
+    user_List.append({
+        "id": len(user_List) + 1,
+        "user_name": user_name,
+        "email": email,
+        "password": password
     })
+
+    # 4. Save updated list
+    with open('parkingData/user_List.json', 'w') as f:
+        json.dump(user_List, f, indent=4)
+
     print("Registration successful!")
-    print('                                      ')
+    return True
+
 
 
 def logIn():
-    # login
-    userInput = {
-        'name': input("Enter your name to login: ").strip(),
-        'password':''
-    }
-    password = input("Enter your password to login: ").strip()
-    if len(password)!='' :
-      userInput['password']=password
 
-    for user in userList:
-        if userInput['name'] == user['name'] and userInput['password'] == user['password'] :
-            if userInput not in loginList:
-                loginList.append(userInput)
-                print("Login successful!")
-            print('                                        ')
-            print()
-            print('Current login user : ',loginList)
-            print()
+    with open('parkingData/user_List.json', 'r') as f:
+        user_List = json.load(f)
 
+    user_name = input("enter user_name:").strip()
+    password = pwinput.pwinput(prompt="Enter your password to login: ",mask='*').strip()
+
+    for user in user_List:
+        if user["user_name"] == user_name and user["password"] == password:
+            print("Login successful")
+
+            parking()
             return
-    print("Login failed.")
+    print("\t   ")
+    print(user["user_name"], user["password"])
+    print("id and password is wrong")
+    print("1. for forgot password")
+    print("2. re-enter")
+    choice = input("enter 1 or 2: ")
+    if choice == "1":
+        validation.forget_passowrd()
+    elif choice == "2":
+        logIn()
+    else:
+        print("please enter correct choice!!!")
 
-# Parking Logic 
+
+# Parking Logic
+
+
 
 def parking():
-  parkingList = [None]*3
-  carDetail = {
-    'Car_Name':'',
-    'Car_Number':'',
-    'Owner_name':'',
-  }
-  while True:
-    print("-------Parking Area---------")
+    parkingList = [None] * 3
 
-    for index , val in enumerate(parkingList):
-      if val == None:
-        print(f"Slot {index} is available.")
-      else:
-        print(f"Slot {index}: {val['Car_Name']} | {val['Car_Number']} | Owner: {val['Owner_name']}")
-    print("----------------------")
+    carDetail = {
+        "Car_user_name": "",
+        "Car_Number": "",
+        "Owner_user_name": "",
+    }
 
-    actionsList = {1:"Park", 2:"Remove", 3:"Details", 4:'exit' }
-    for num, action in actionsList.items():
-      print(action, ':', num)
-    print("----------------------")
+    while True:
+        print("-------Parking Area---------")
+        print("\t  ")
 
+        for index, val in enumerate(parkingList):
+            if val == None:
+                print(f"Slot {index} is available.")
+            else:
+                print(
+                    f"Slot {index}: {val['Car_user_name']} | {val['Car_Number']} | Owner: {val['Owner_user_name']}"
+                )
+        print("----------------------")
+        print("\t   ")
 
-    taskNum = int(input("Enter '1' to park a car, '2' to remove a car,'3' to show parking area details, or '4' to exit: "))
-    if taskNum == 1:
-      parkNum = int(input('Enter slot:'))
-      for index, val in enumerate(parkingList):
-        if val == None and index == parkNum :
-          carDetail['Car_Name'] = input("Enter Car Name: ").strip()
-          carDetail['Car_Number'] = input("Enter Car Number: ").strip()
-          carDetail['Owner_name'] = input("Enter Owner Name: ").strip()
-          parkingList[index] = carDetail.copy()
-          print(f"Car parked in slot {index}.")
-          print('------------------')
-          break
-      else:
-        print("No available slots or invalid slot number.")
-    elif taskNum == 2:
-      removeNum = int(input("Enter slot: "))
-      if 0<= removeNum < len(parkingList) and parkingList[removeNum] is not None:
-        parkingList[removeNum] = None
-        print(f"Car removed from slot {removeNum}.")
-      else:
-        print("Invalid slot number or slot is already empty.")
-    elif taskNum == 3:
-      for detail in parkingList:
-        if detail is not None:
-          print(f"Car Name: {detail['Car_Name']}, Car Number: {detail['Car_Number']}, Owner Name: {detail['Owner_name']}")
+        actionsList = {1: "Park", 2: "Remove", 3: "Details", 4: "exit", 5: 'Logout'}
+        for num, action in actionsList.items():
+            print(action, ":", num)
+        print("----------------------")
+        print("\t   ")
+
+        task_Num = int(
+            input(
+                "Enter '1' to park a car, '2' to remove a car,'3' to show parking area details, or '4' to exit: "
+            )
+        )
+        if task_Num == 1:
+            parkNum = int(input("Enter slot:"))
+            for index, val in enumerate(parkingList):
+                if val == None and index == parkNum:
+                    carDetail["Car_user_name"] = input("Enter Car user_name: ").strip()
+                    carDetail["Car_Number"] = input("Enter Car Number: ").strip()
+                    carDetail["Owner_user_name"] = input("Enter Owner user_name: ").strip()
+                    parkingList[index] = carDetail.copy()
+                    print(f"Car parked in slot {index}.")
+                    print("------------------")
+                    break
+            else:
+                print("No available slots or invalid slot number.")
+            
+            # car_park.carParking(parkingList)
+
+        elif task_Num == 2:
+            remove_vehical.remove_parking(parkingList)
+
+        elif task_Num == 3:
+            for detail in parkingList:
+                if detail is not None:
+                    print(
+                        f"Car user_name: {detail['Car_user_name']}, Car Number: {detail['Car_Number']}, Owner user_name: {detail['Owner_user_name']}"
+                    )
+                else:
+                    print("Empty Slot")
+        elif task_Num == 4:
+            break
+        elif task_Num == 5:
+            print("Logged out successfully!")
+            return
+
         else:
-          print("Empty Slot")
-    elif taskNum == 4:
-      break
-    else:
-      print("Invalid input. Please try again.")
+            print("Invalid input. Please try again.")
+
+
+
 
 
 
 # End of Parking Logic
-
-def main():
-  while True:
-    print('Welcome to the car parking system!')
-    print('1. Register')
-    print('2. Exit')
-    choice = input('Enter your choice : ')
-    if choice == '1':
-      
-      register()
-      logIn()
-      for user in userList:
-        for loginUser in loginList:
-          if user == loginUser:
-            parking()
-      else:
-        print('Please login to access the parking system.')
-        logIn()
-        for user in userList:
-          for loginUser in loginList:
-            if user == loginUser:
-              parking()
-
-    elif choice == '2':
-      print('Exiting the system. Goodbye!')
-      break
-    else:
-      print('Invalid choice. Please try again.')
-main()
-
-
-
-
-
-
-
-    
