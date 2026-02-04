@@ -1,0 +1,22 @@
+.links{
+  background-color: rgb(70, 22, 120);
+  padding: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.register{
+  margin-left: 70rem;
+  color: #fff;
+
+}
+
+.login{
+  margin-right: 1rem;
+  color: #fff;
+}
+
+.title{
+  color: #fff;
+}

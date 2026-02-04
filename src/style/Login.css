@@ -1,0 +1,87 @@
+/* ===== Login Card Wrapper ===== */
+.loginfield {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  min-height: 50vh;
+  margin: 50px auto;
+  padding: 40px 30px; /* more top/bottom padding */
+  background: #000; /* black background */
+  border: 1px solid #fff; /* white border */
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+  font-family: "Segoe UI", Arial, sans-serif;
+  box-sizing: border-box; /* ensure padding inside */
+}
+
+/* Heading */
+.loginfield h1 {
+  text-align: center;
+  color: #fff; /* white text */
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-weight: 600;
+  font-size: 26px;
+}
+
+/* Form layout */
+.loginform {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* space between inputs */
+  padding: 0 5px; /* slight horizontal padding */
+}
+
+/* Inputs */
+.loginform input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #555; /* dark grey border */
+  border-radius: 6px;
+  background: #111; /* slightly lighter black */
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.25s ease, background 0.25s ease;
+  box-sizing: border-box; /* avoid overflow */
+}
+
+/* Placeholder color */
+.loginform input::placeholder {
+  color: #aaa; /* light grey placeholder */
+}
+
+/* Input hover/focus effect */
+.loginform input:hover,
+.loginform input:focus {
+  border-color: #fff; /* white border on hover/focus */
+  background: #222; /* subtle hover background */
+}
+
+/* Button */
+.loginform button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  background: #fff; /* white button */
+  color: #000; /* black text */
+  font-weight: 600;
+  font-size: 15px;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
+}
+
+/* Button hover */
+.loginform button:hover {
+  background: #000; /* black background on hover */
+  color: #fff;       /* white text on hover */
+  border: 1px solid #fff;
+  transform: translateY(-2px);
+}
+
+/* Button active */
+.loginform button:active {
+  transform: translateY(0);
+}
